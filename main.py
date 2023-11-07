@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import numpy as np
 import math
 import copy
@@ -21,7 +19,6 @@ count = 0
 
 coord = np.empty((NB_TOWNS, 2))
 
-"""
 coord = np.array([
     [565.0,  575.0],
     [25.0,  185.0],
@@ -34,12 +31,8 @@ coord = np.array([
     [580.0,  1175.0],
     [650.0,  1130.0],
 
-])"""
-
+])
 dist = np.zeros((NB_TOWNS,NB_TOWNS))
-
-
-
 
 #Calculates distance matrix
 def calculate_dist(coord):
@@ -55,7 +48,6 @@ def calculate_dist(coord):
                 dist[i][j] = math.sqrt(pow((x2-x1),2) + pow((y2-y1),2))
 
 
-
 #Evaluation function (total distance)
 def evaluation_solution(sol):
 
@@ -68,8 +60,6 @@ def evaluation_solution(sol):
     eval += dist[sol[NB_TOWNS-1]][sol[0]]
 
     return eval
-
-
 
 #Builds a solution using the next neighbour heuristic
 def build_next_neighbour():
@@ -84,16 +74,14 @@ def build_next_neighbour():
         sol[i] = i
 
     eval = evaluation_solution(sol)
-    print("Next neighbour ", (sol, eval))
+    #print("Next neighbour ", (sol, eval))
 
     for i in range(NB_TOWNS):
         best_solution[i] = sol[i]
 
     best_eval = eval
 
-
     return eval
-
 
 #Builds final solution
 def build_solution():
@@ -129,14 +117,12 @@ def build_solution():
         best_eval = eval
         for i in range(NB_TOWNS):
             best_solution[i] = solution[i]
-        print("New best solution : ")
-        print(solution)
-        print(best_eval)
+        #print("New best solution : ")
+        #print(solution)
+        #print(best_eval)
 
     return
     
-
-
 def branch_and_bound(dist, iteration, evalParentNode):
    
     #Number of total iterations
@@ -152,7 +138,6 @@ def branch_and_bound(dist, iteration, evalParentNode):
 
     #Creation of a copy of the distance matrix
     m = copy.deepcopy(dist)
-
 
     evalChildNode = evalParentNode
 
@@ -173,7 +158,6 @@ def branch_and_bound(dist, iteration, evalParentNode):
         if not 0 in m[:,i] and minValueColumn[i] != math.inf:
             m[:,i] -= minValueColumn[i]
             evalChildNode += minValueColumn[i] #Updating the current lower bound
-
     
     #Cut : stop the exploration of this node
     if (best_eval >= 0 and evalChildNode >= best_eval):
@@ -216,12 +200,10 @@ def branch_and_bound(dist, iteration, evalParentNode):
     if listZeros == []:
         return
     
-
     #Updates paths
     starting_town[iteration] = maxZero[1]
     ending_town[iteration] = maxZero[2]
     
-
     #Creating a copy of current distance matrix for left exploration (choice)
     m2 = copy.deepcopy(m)
    
@@ -233,9 +215,6 @@ def branch_and_bound(dist, iteration, evalParentNode):
     #Explore left branch of tree (choice)
     branch_and_bound(m2, iteration + 1, evalChildNode)
 
-
-
-
     #Creating a copy of current distance matrix for right exploration (non-choice)
     m3 = copy.deepcopy(m)
 
@@ -245,28 +224,6 @@ def branch_and_bound(dist, iteration, evalParentNode):
 
     #Explore right branch of tree (non-choice)
     branch_and_bound(m3, iteration , evalChildNode)
-    
-
-
-
-
-
-
-### Main ###
-
-# Open the file
-f = open("berlin52.tsp", "r")
-
-#Go to line 7
-f.seek(128)
-
-#Read each line
-for i in range(NB_TOWNS):
-    line = f.readline()
-    l = line.split()
-    coord[i][0] = float(l[1])
-    coord[i][1] = float(l[2])
-
 
 #Prints cities coordinates
 print("\nCoordinates:\n")
@@ -289,8 +246,5 @@ np.fill_diagonal(dist, math.inf)
 
 branch_and_bound(dist, iteration, lowerbound)
 
-print("Number of iterations :", count)
 print("Best solution:", best_solution)
 print("Best evaluation :", best_eval)
-print("Next neighbour heuristic :", next_neighbour)
-print("Runtime : %s seconds " % (time.time() - start_time))
